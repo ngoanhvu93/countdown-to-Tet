@@ -48,3 +48,23 @@ h1 {
 .countdown-text {
   animation: fadeIn 1s ease-in-out;
 }
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animation {
+  background: linear-gradient(270deg, #ff6347, #ff4500, #32cd32, #1e90ff);
+  background-size: 400% 400%;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
+}
