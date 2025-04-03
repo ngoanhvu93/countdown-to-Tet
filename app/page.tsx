@@ -15,7 +15,7 @@ export default function Home() {
   const [isMuted, setIsMuted] = useState(false);
 
   // Use a ref to keep track of animation frame
-  const animationRef = useRef();
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     const audioInstance = new Audio("/asian-new-year-celebration.mp3");
