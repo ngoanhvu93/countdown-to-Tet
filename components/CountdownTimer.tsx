@@ -68,12 +68,15 @@ const CountdownUnit: React.FC<CountdownUnitProps> = ({ value, label }) => {
     };
   }, [value]);
 
+  // Format the number to add leading zero if less than 10
+  const formattedValue = value < 10 ? `0${value}` : value;
+
   return (
     <div className="w-16 sm:w-20 md:w-24  ">
       <div>
         <div className="front bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-xl shadow-lg flex flex-col items-center justify-center p-3 sm:p-4 md:p-5">
           <span className="text-xl sm:text-3xl font-bold text-white number">
-            {value}
+            {formattedValue}
           </span>
           <span className="text-sm sm:text-lg text-white opacity-80">
             {label}
