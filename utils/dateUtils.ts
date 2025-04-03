@@ -1,6 +1,6 @@
 export function getLunarNewYear(): Date {
   // Lunar New Year 2024 falls on February 10th
-  return new Date('2024-02-10T00:00:00');
+  return new Date("2026-02-17T00:00:00");
 }
 
 export function calculateTimeLeft(): {
