@@ -172,7 +172,7 @@ const CountdownTimer: React.FC = () => {
       </div>
 
       <div className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-center text-gray-500 opacity-70 blinking-text">
-        Đếm ngược đến Tết Nguyên Đán 2025 🎉
+        Đếm ngược đến Tết Nguyên Đán {new Date().getFullYear() + 1} 🎉
       </div>
     </div>
   );
