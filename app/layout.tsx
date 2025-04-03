@@ -1,11 +1,9 @@
-
-
-import { Metadata } from 'next';
-import './globals.css';
+import { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Lunar New Year Countdown',
-  description: 'Countdown to Lunar New Year 2024',
+  title: "Lunar New Year Countdown",
+  description: "Countdown to Lunar New Year 2024",
 };
 
 export default function RootLayout({
@@ -15,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="overflow-hidden">{children}</body>
     </html>
   );
 }

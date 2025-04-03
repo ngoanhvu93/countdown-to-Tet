@@ -12,8 +12,7 @@ interface TimeLeft {
 }
 
 // Hàm tính toán thời gian còn lại
-function calculateTimeLeft(): TimeLeft {
-  const targetDate = new Date("2026-02-17T00:00:00"); // Ngày Tết 2026
+function calculateTimeLeft(targetDate: Date): TimeLeft {
   const now = new Date();
   const difference = targetDate.getTime() - now.getTime();
 
@@ -88,7 +87,17 @@ const CountdownUnit: React.FC<CountdownUnitProps> = ({ value, label }) => {
 };
 
 const CountdownTimer: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
+  const [targetDate, setTargetDate] = useState<Date>(
+    new Date("2026-02-17T00:00:00")
+  ); // Giá trị mặc định
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   const [isCelebration, setIsCelebration] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
@@ -111,72 +120,133 @@ const CountdownTimer: React.FC = () => {
     };
   }, []);
 
+  // Fetch ngày Tết từ API
   useEffect(() => {
-    const timer = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft();
-      setTimeLeft(newTimeLeft);
+    const fetchLunarNewYear = async () => {
+      try {
+        setLoading(true);
 
-      // Kiểm tra nếu đến ngày Tết
-      if (
-        newTimeLeft.days === 0 &&
-        newTimeLeft.hours === 0 &&
-        newTimeLeft.minutes === 0 &&
-        newTimeLeft.seconds === 0
-      ) {
-        setIsCelebration(true); // Kích hoạt hiệu ứng bắn pháo hoa
+        // Gọi API lấy ngày Tết (ví dụ)
+        // Ở đây sử dụng API Nager.Date (API miễn phí cho ngày lễ)
+        const response = await fetch(
+          `https://date.nager.at/api/v3/publicholidays/${
+            new Date().getFullYear() + 1
+          }/VN`
+        );
+
+        if (!response.ok) {
+          throw new Error("Không thể lấy dữ liệu từ API");
+        }
+
+        const holidays = await response.json();
+
+        // Tìm ngày Tết trong danh sách ngày lễ
+        const lunarNewYear = holidays.find(
+          (holiday: any) =>
+            holiday.name.includes("Lunar New Year") ||
+            holiday.name.includes("Tết") ||
+            holiday.localName.includes("Tết")
+        );
+
+        console.log(lunarNewYear);
+
+        if (lunarNewYear) {
+          setTargetDate(new Date(lunarNewYear.date + "T00:00:00"));
+        } else {
+          // Nếu không tìm thấy, giữ ngày mặc định
+          console.log("Không tìm thấy ngày Tết, sử dụng ngày mặc định");
+        }
+      } catch (err) {
+        console.error("Lỗi khi lấy ngày Tết:", err);
+        setError("Không thể lấy ngày Tết, đang sử dụng ngày mặc định");
+      } finally {
+        setLoading(false);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(timer);
+    fetchLunarNewYear();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const timer = setInterval(() => {
+        const newTimeLeft = calculateTimeLeft(targetDate);
+        setTimeLeft(newTimeLeft);
+
+        // Kiểm tra nếu đến ngày Tết
+        if (
+          newTimeLeft.days === 0 &&
+          newTimeLeft.hours === 0 &&
+          newTimeLeft.minutes === 0 &&
+          newTimeLeft.seconds === 0
+        ) {
+          setIsCelebration(true); // Kích hoạt hiệu ứng bắn pháo hoa
+        }
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [loading, targetDate]);
 
   return (
     <div className="flex justify-center items-center flex-col mt-10 sm:mt-20 lg:mt-3 ">
-      {isCelebration && (
-        <div className="confetti-container absolute inset-0">
-          <Confetti
-            width={windowWidth}
-            height={windowHeight}
-            recycle={false}
-            numberOfPieces={1000}
-          />
-        </div>
+      {loading ? (
+        <div className="text-center py-4">Đang tải ngày Tết...</div>
+      ) : error ? (
+        <div className="text-center text-red-500 py-2">{error}</div>
+      ) : (
+        <>
+          {isCelebration && (
+            <div className="confetti-container absolute inset-0">
+              <Confetti
+                width={windowWidth}
+                height={windowHeight}
+                recycle={false}
+                numberOfPieces={1000}
+              />
+            </div>
+          )}
+
+          <div className="flex justify-evenly items-center w-full space-x-6 sm:space-x-8 md:space-x-10">
+            <div className="flex-1">
+              <CountdownUnit
+                key={`days-${timeLeft.days}`}
+                value={timeLeft.days}
+                label="Ngày"
+              />
+            </div>
+            <div className="flex-1">
+              <CountdownUnit
+                key={`hours-${timeLeft.hours}`}
+                value={timeLeft.hours}
+                label="Giờ"
+              />
+            </div>
+            <div className="flex-1">
+              <CountdownUnit
+                key={`minutes-${timeLeft.minutes}`}
+                value={timeLeft.minutes}
+                label="Phút"
+              />
+            </div>
+            <div className="flex-1">
+              <CountdownUnit
+                key={`seconds-${timeLeft.seconds}`}
+                value={timeLeft.seconds}
+                label="Giây"
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-center text-gray-500 opacity-70 blinking-text">
+            Đếm ngược đến Tết Nguyên Đán {new Date(targetDate).getFullYear()} 🎉
+          </div>
+
+          <div className="mt-2 text-sm text-gray-400">
+            Ngày Tết: {targetDate.toLocaleDateString("vi-VN")}
+          </div>
+        </>
       )}
-
-      <div className="flex justify-evenly items-center w-full space-x-6 sm:space-x-8 md:space-x-10">
-        <div className="flex-1">
-          <CountdownUnit
-            key={timeLeft.days}
-            value={timeLeft.days}
-            label="Ngày"
-          />
-        </div>
-        <div className="flex-1">
-          <CountdownUnit
-            key={timeLeft.hours}
-            value={timeLeft.hours}
-            label="Giờ"
-          />
-        </div>
-        <div className="flex-1">
-          <CountdownUnit
-            key={timeLeft.minutes}
-            value={timeLeft.minutes}
-            label="Phút"
-          />
-        </div>
-        <div className="flex-1">
-          <CountdownUnit
-            key={timeLeft.seconds}
-            value={timeLeft.seconds}
-            label="Giây"
-          />
-        </div>
-      </div>
-
-      <div className="mt-6 sm:mt-8 text-lg sm:text-xl md:text-2xl text-center text-gray-500 opacity-70 blinking-text">
-        Đếm ngược đến Tết Nguyên Đán {new Date().getFullYear() + 1} 🎉
-      </div>
     </div>
   );
 };

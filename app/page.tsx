@@ -112,15 +112,15 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-red-100 to-yellow-200 flex flex-col items-center justify-center px-6 py-12 sm:px-8 md:px-12 lg:px-16 xl:px-20">
+    <main className="overflow-hidden bg-gradient-to-b from-red-100 to-yellow-200 flex flex-col items-center justify-center px-6 py-12 sm:px-8 md:px-12 lg:px-16 xl:px-20">
       {/* Add a fade-in animation when the page loads */}
       <motion.h1
-        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-6 sm:mb-8 text-center text-gray-800 gradient-animation"
+        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold mb-6 sm:mb-8 text-center text-gray-800 gradient-animation h-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        Lunar New Year 2025 Countdown
+        🎉 Tết Nguyên Đán {new Date().getFullYear() + 1} 🎉
       </motion.h1>
 
       <motion.div
@@ -202,11 +202,8 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5, delay: 2 }}
       >
-        <Link
-          href="https://vu93.vercel.app/vn"
-          className="link-button bg-red-700 w-56 flex justify-center items-center text-white py-3 px-6 sm:px-8 rounded-lg shadow-md hover:bg-red-800 transition duration-300 ease-in-out"
-        >
-          Join the Celebration
+        <Link href="https://vu93.vercel.app/vn" className="text-gray-700">
+          Design by Vu Ngo
         </Link>
       </motion.div>
     </main>
