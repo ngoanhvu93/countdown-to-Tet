@@ -164,6 +164,7 @@ export default function Home() {
               <span>{formatTime(duration)}</span>
             </div>
             <input
+              title="Timeline"
               type="range"
               min="0"
               max={duration || 0}
@@ -178,6 +179,7 @@ export default function Home() {
               {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </button>
             <input
+              title="Volume"
               type="range"
               min="0"
               max="1"
